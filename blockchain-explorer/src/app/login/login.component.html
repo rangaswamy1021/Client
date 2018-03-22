@@ -1,0 +1,69 @@
+<section id="wrapper">
+
+
+    <div class="row">
+      <div class="login-top">
+          <img src="assets/images/logo-icon.png" alt="homepage" class="light-logo login-logo" />
+      </div>
+    </div>
+    <div class="login-register">
+    <div class="login-box card">
+      <div class="login-title">Login</div>
+      <div class="card-body p-5">
+        <div *ngIf="invalidLogin" class="alert alert-danger">Invalid credentials.</div>
+        <div class="row">
+          <div class="col-md-7 border-right">
+            <form class="form p-t-20" [formGroup]="loginForm">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Account</label>
+                    <div class="input-group">
+    
+                      <input type="email" formControlName="tenant" class="form-control" id="exampleInputEmail1" placeholder="Account">
+                    </div>
+                  </div>
+              <div class="form-group">
+                <label for="exampleInputuname">Username</label>
+                <div class="input-group">
+
+                  <input type="text" formControlName="username" class="form-control" id="exampleInputuname" placeholder="Username">
+                </div>
+              </div>
+            
+              <div class="form-group">
+                <label for="pwd1">Password</label>
+                <div class="input-group">
+
+                  <input type="password" formControlName="password" class="form-control" id="pwd1" placeholder="Enter Password">
+                </div>
+              </div>
+              <button type="submit" (click)="loginBtn()" class="btn btn-info login-btn m-r-10">Login</button>
+             <div class="forgot-password">
+              <a href="" class="forgot-pass"> Forgot your password?</a>
+            </div>
+            </form>
+          </div>
+          <div class="col-md-5">
+            <div class="social">
+              <div class="git-btn">
+                <a href="javascript:void(0)" class="btn btn-md btn-min btn-github" data-toggle="tooltip" title="Login with GitHub">
+                  <span class="fa fa-github"></span> Sign in with GitHub
+
+                </a>
+              </div>
+              <div class="gmail-btn">
+                <a href="javascript:void(0)" class="btn btn-md btn-min btn-googleplus" data-toggle="tooltip" title="Login with Google">
+                  <i aria-hidden="true" class="fa fa-google-plus"></i> Sign in with Google
+
+                </a>
+              </div>
+
+              <a href="" class="active-user"> Activate a User</a>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

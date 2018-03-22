@@ -1,0 +1,314 @@
+<div class="row page-titles">
+  <div class="align-self-left mt-2 mb-2">
+    <h3 class="breadcrumb-title">Resource Explorer</h3>
+  </div>
+</div>
+
+
+<div class="card resource-table bg-trans">
+  <div class="card-body p-0">
+    <div class="row">
+      <div class="col-md-2">
+        <h3 class="breadcrumb-title font-small-t">Smart Contracts </h3>
+      </div>
+      <div class="col-md-6">
+        <div class="dt-buttons list-btns">
+          <button type="button" *ngIf="disabledModify" data-toggle="modal" data-target=".decomposed-view" (click)="decomposedView()"
+            class="btn btn-secondary btn-ser">View Resource</button>
+
+          <button type="button" *ngIf="disabledModify" data-toggle="modal" data-target=".ownership-trail" (click)="ownerTrailBtn()"
+            class="btn btn-secondary btn-ser">Ownership Trail</button>
+          <button type="button" *ngIf="disabledModify" data-toggle="modal" data-target=".state-trail" (click)="stateTrailBtn()" class="btn btn-secondary btn-ser">State Trail</button>
+
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-inline pull-right search-box">
+          <label class="sr-only" for="inlineFormInput">Name</label>
+          <input type="text" [(ngModel)]="searchData" class="form-control mb-2 mr-sm-2 mb-sm-0" id="inlineFormInput" placeholder="Search">
+          <button type="submit" class="btn btn-secondary btn-ser">Search</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <th style="padding-left:35px">Id</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Owner</th>
+          <th>Creation Time</th>
+          <th>Skills</th>
+          <th>Datasets</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let resource of resources | filter:searchData">
+            <td>
+              <input type="radio" (change)='checkboxCheckedEvent(resource, $event)' class="check" id="flat-radio-{{resource.resourceId}}"
+                name="flat-radio">
+              <label for="flat-radio-{{resource.resourceId}}">{{resource.resourceId}}</label>
+            </td>
+            <td>{{resource.resourceName}}</td>
+            <td>{{resource.resourceType}}</td>
+            <td>{{resource.owner}}</td>
+            <td>{{resource.creationTime | date :'short':'CST'}}</td>
+            <td>
+              <small class="small-font block" *ngFor="let skill of resource.skills">
+                {{skill}}
+              </small>
+            </td>
+            <td>
+              <small class="small-font block" *ngFor="let dataset of resource.datasets">
+                {{dataset}}
+              </small>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div id="responsive-modal" class="modal fade decomposed-view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">View Resource</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="btns-popup">
+
+          <button class="btn btn-secondary btn-p" [ngClass]="{'btn-success': tableHide}" (click)="tableFormat()"> Table Format </button>
+          <button class="btn btn-secondary btn-p" [ngClass]="{'btn-success': graphVisualHide}" (click)="graphVisualization()"> Graph Visualization </button>
+        </div>
+        <div class="table-responsive" *ngIf="tableHide">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>Creation Time</th>
+                <th>Skills</th>
+                <th>Datasets</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let viewList of viewLists">
+                <td>{{viewList.resourceId}}</td>
+                <td>{{viewList.resourceName}}</td>
+                <td>{{viewList.resourceType}}</td>
+                <td>{{viewList.owner}}</td>
+                <td>{{viewList.creationTime | date :'short':'CST'}}</td>
+                <td>
+                  <small class="small-font block" *ngFor="let skill of viewList.skills">
+                    {{skill}}
+                  </small>
+                </td>
+                <td>
+                  <small class="small-font block" *ngFor="let dataset of viewList.datasets">
+                    {{dataset}}
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="graphVisualHide">
+          <hr>
+          <div class="row">
+          <div class="col-md-9">
+              <nvd3 [options]="options" [data]="data"></nvd3>
+             </div>
+            <div class="col-md-3">
+              <header class="legend-title ng-star-inserted">
+                <span class="legend-title-text">Legend</span>
+              </header>
+              <div class="legend-wrap">
+                <ul class="legend-labels" style="max-height: 255px;">
+
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Agent">
+                      <span class="legend-label-color" style="background-color: rgb(31, 119, 180);">
+                      </span>
+                      <span class="legend-label-text">
+                        Agent
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Skill">
+                      <span class="legend-label-color" style="background-color: rgb(255, 127, 14);">
+                      </span>
+                      <span class="legend-label-text">
+                        Skill
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Dataset">
+                      <span class="legend-label-color" style="background-color: rgb(174, 199, 232);">
+                      </span>
+                      <span class="legend-label-text">
+                        Dataset
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Insight">
+                      <span class="legend-label-color" style="background-color: rgb(44, 160, 44);">
+                      </span>
+                      <span class="legend-label-text">
+                        Insight
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Model">
+                      <span class="legend-label-color" style="background-color: rgb(255, 187, 120);">
+                      </span>
+                      <span class="legend-label-text">
+                        Model
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="responsive-modal" class="modal fade ownership-trail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Ownership Trail</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>Creation Time</th>
+                <th>Skills</th>
+                <th>Datasets</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ownershipHead.resourceId}}</td>
+                <td>{{ownershipHead.resourceName}}</td>
+                <td>{{ownershipHead.resourceType}}</td>
+                <td>{{ownershipHead.owner}}</td>
+                <td>{{ownershipHead.creationTime | date :'short':'CST'}}</td>
+                <td>{{ownershipHead.skills}}</td>
+                <td>{{ownershipHead.datasets}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Owner</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of ownershipdata">
+                <td>{{data.owner}}</td>
+                <td>{{data.time | date :'short':'CST'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="responsive-modal" class="modal fade state-trail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+  style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">State Trail</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>Creation Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{resHeadData.resourceId}}</td>
+                <td>{{resHeadData.resourceName}}</td>
+                <td>{{resHeadData.resourceType}}</td>
+                <td>{{resHeadData.owner}}</td>
+                <td>{{resHeadData.creationTime | date :'short':'CST'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Update Time</th>
+                <th>Skills</th>
+                <th>Datasets</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let stateData of stateTraildata">
+                <td>{{stateData.updateTime | date :'short':'CST'}}</td>
+                <td>
+                  <small class="small-font block">
+                    {{stateData.skills}}
+                  </small>
+                </td>
+                <td>
+                  <small class="small-font block">
+                    {{stateData.datasets}}
+                    <br>
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

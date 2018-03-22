@@ -1,0 +1,477 @@
+<div class="row page-titles mt-5 pt-5 pb-2">
+  <div class="col-md-5 align-self-center pl-0">
+    <h3 class="breadcrumb-title">Cortex Assurance API Client</h3>
+  </div>
+  <div class="col-md-7 align-self-right">
+    <button type="button" class="btn btn-md btn-info btn-padd  pull-right" (click)="createRBtn()">Create Resource</button>
+    <button type="button" class="btn btn-md btn-info btn-padd  pull-right mr-3" data-toggle="modal" data-target=".view-purchase"
+      (click)="viewPurchaseBtn()">View Purchase Requests</button>
+  </div>
+</div>
+
+
+<div class="create-resource-form mb-4" *ngIf="showResourceForm">
+  <form [formGroup]="resourceForm" name="resourceForm">
+    <div class="row">
+      <div class="col-md-5">
+        <div class="form-group">
+          <label for="resourceName">Resource Name</label>
+          <input type="text" formControlName="resourceName" class="form-control" id="resourceName" placeholder="Elastic">
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="form-group">
+          <label for="resourceType:">Resource Type</label>
+          <select class="form-control custom-select col-12" formControlName="resourceType" id="resourceType">
+            <option value="agent">Agent</option>
+            <option value="dataset">Dataset</option>
+            <option value="skill">Skill</option>
+            <option value="insight">Insight</option>
+            <option value="model">Model</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="form-group">
+          <button type="submit" (click)="addResource(resourceForm.value)" class="btn btn-info sub-btn mt-4 m-r-10">Submit</button>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+
+
+
+<div class="card resource-table bg-trans">
+  <div class="card-body p-0">
+    <div class="row">
+      <div class="col-md-2">
+        <h3 class="breadcrumb-title font-small-t">Smart Contracts </h3>
+      </div>
+      <div class="col-md-7 pl-0">
+        <div class="dt-buttons list-btns">
+          <button type="button" *ngIf="disabledView" data-toggle="modal" data-target=".decomposed-view" (click)="decomposedView()"
+            class="btn btn-secondary btn-ser">View Resource</button>
+
+
+
+          <button type="button" *ngIf="disabledModify" data-toggle="modal" (click)="updateResource()" data-target=".modify-resource"
+            class="btn btn-secondary btn-ser">Modify Resource</button>
+
+          <button type="button" *ngIf="disabledModify" data-toggle="modal" (click)="listChange()" class="btn btn-secondary btn-ser">
+            {{type}} </button>
+
+          <button type="button" *ngIf="disabledModify" data-toggle="modal" data-target=".grant-access1" class="btn btn-secondary btn-ser">list for lease</button>
+
+
+          <button type="button" *ngIf="requestView" (click)="requestBuy()" class="btn btn-secondary btn-ser">Request To Buy</button>
+          <button type="button" *ngIf="requestView" (click)="requestLease()" class="btn btn-secondary btn-ser">Request To Lease</button>
+
+          <!-- <button type="button" *ngIf="disabledModify" data-toggle="modal" data-target=".resource-sell" (click)="sellChange()" class="btn btn-secondary btn-ser">Sell Resource</button> -->
+
+          <!-- <button type="button" *ngIf="disabledModify" data-toggle="modal" data-target=".grant-access" class="btn btn-secondary btn-ser">Lease Resource</button> -->
+
+
+        </div>
+      </div>
+      <div class="col-md-3">
+
+        <div class="form-inline pull-right search-box">
+          <label class="sr-only" for="inlineFormInput">Name</label>
+          <input type="text" [(ngModel)]="searchData" class="form-control mb-2 mr-sm-2 mb-sm-0" id="inlineFormInput" placeholder="Search">
+          <button type="submit" class="btn btn-secondary btn-ser">Search</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <th style="padding-left:35px">Id</th>
+          <th>Name</th>
+          <th>Listed for sale</th>
+          <th>Type</th>
+          <th>Owner</th>
+          <th>Creation Time</th>
+          <th>Skills</th>
+          <th>Datasets</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let resource of resources | filter:searchData">
+            <td>
+              <input type="radio" (change)='checkboxCheckedEvent(resource, $event)' class="check" id="flat-radio-{{resource.resourceId}}"
+                name="flat-radio">
+              <label for="flat-radio-{{resource.resourceId}}">{{resource.resourceId}}</label>
+            </td>
+            <td>{{resource.resourceName}}</td>
+            <td [hidden]="!resource.forSale">
+              <i class="mdi mdi-check"></i>
+            </td>
+            <td [hidden]="resource.forSale"></td>
+            <td>{{resource.resourceType}}</td>
+            <td>{{resource.owner}}</td>
+            <td>{{resource.creationTime | date :'short':'CST'}}</td>
+            <td>
+
+              <small class="small-font block" *ngFor="let skill of resource.skills">
+                <span> {{skill}} </span>
+              </small>
+            </td>
+            <td>
+              <small class="small-font block" *ngFor="let dataset of resource.datasets">
+                {{dataset}}
+              </small>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+
+<div id="responsive-modal" class="modal fade modify-resource" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Modify Resource</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <form [formGroup]="resourceForm" name="resourceForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="resourceId">Resource Id</label>
+            <input type="text" formControlName="resourceId" class="form-control" id="resourceId" placeholder="Resource Id">
+          </div>
+
+          <div class="form-group">
+            <label for="resourceType:">Resource Type</label>
+            <select class="form-control custom-select col-12" formControlName="resourceType" id="resourceType">
+
+              <option value="dataset">Dataset</option>
+              <option value="skill">Skill</option>
+
+            </select>
+          </div>
+          <div class="form-group array-form">
+            <div formArrayName="values">
+              <label for="value" class="block">Value</label>
+              <button class="btn btn-info" type="button" (click)="onAddValue()">Add value</button>
+
+
+              <div class="form-inline mt-2">
+                <div class="form-group mb-2 mr-3" *ngFor="let hobbyControl of resourceForm.get('values')['controls']; let i = index">
+                  <input type="text" class="form-control" [formControlName]="i">
+                  <div class="input-group-addon close-btn" (click)="delInput(i)">
+                    <i class="mdi mdi-close"></i>
+                  </div>
+                  <!-- <button type="button" (click)="delInput(i)">Delete</button> -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+          <button type="button" (click)="updateDataResource()" class="btn btn-info waves-effect waves-light">Update</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<div id="responsive-modal" class="modal fade resource-sell" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+  style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Grant Ownership</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <form [formGroup]="sellForm" name="sellForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="value-text" class="control-label">Value</label>
+            <input class="form-control" type="text" formControlName="ownername" placeholder="rvohra" id="value-text">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+          <button type="button" (click)="sellDataUpdate()" class="btn btn-info waves-effect waves-light">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="responsive-modal" class="modal fade decomposed-view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">View Resource</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+
+        <div class="btns-popup">
+
+          <button class="btn btn-secondary btn-p" [ngClass]="{'btn-success': tableHide}" (click)="tableFormat()"> Table Format </button>
+          <button class="btn btn-secondary btn-p" [ngClass]="{'btn-success': graphVisualHide}" (click)="graphVisualization()"> Graph Visualization </button>
+        </div>
+        <div class="table-responsive" *ngIf="tableHide">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>Creation Time</th>
+                <th>Skills</th>
+                <th>Datasets</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let viewList of viewLists">
+                <td>{{viewList.resourceId}}</td>
+                <td>{{viewList.resourceName}}</td>
+                <td>{{viewList.resourceType}}</td>
+                <td>{{viewList.owner}}</td>
+                <td>{{viewList.creationTime | date :'short':'CST'}}</td>
+                <td>
+                  <small class="small-font block" *ngFor="let skill of viewList.skills">
+                    {{skill}}
+                  </small>
+                </td>
+                <td>
+                  <small class="small-font block" *ngFor="let dataset of viewList.datasets">
+                    {{dataset}}
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div *ngIf="graphVisualHide">
+          <hr>
+          <div class="row">
+          <div class="col-md-9">
+              <nvd3 [options]="options" [data]="data"></nvd3>
+             </div>
+            <div class="col-md-3">
+              <header class="legend-title ng-star-inserted">
+                <span class="legend-title-text">Legend</span>
+              </header>
+              <div class="legend-wrap">
+                <ul class="legend-labels" style="max-height: 255px;">
+
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Agent">
+                      <span class="legend-label-color" style="background-color: rgb(31, 119, 180);">
+                      </span>
+                      <span class="legend-label-text">
+                        Agent
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Skill">
+                      <span class="legend-label-color" style="background-color: rgb(255, 127, 14);">
+                      </span>
+                      <span class="legend-label-text">
+                        Skill
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Dataset">
+                      <span class="legend-label-color" style="background-color: rgb(174, 199, 232);">
+                      </span>
+                      <span class="legend-label-text">
+                        Dataset
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Insight">
+                      <span class="legend-label-color" style="background-color: rgb(44, 160, 44);">
+                      </span>
+                      <span class="legend-label-text">
+                        Insight
+                      </span>
+                    </span>
+                  </li>
+                  <li class="legend-label ng-star-inserted">
+                    <span tabindex="-1" title="Model">
+                      <span class="legend-label-color" style="background-color: rgb(255, 187, 120);">
+                      </span>
+                      <span class="legend-label-text">
+                        Model
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="responsive-modal" class="modal fade ownership-trail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Ownership Trail</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Owner</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of ownershipdata">
+                <td>{{data.owner}}</td>
+                <td>{{data.time | date :'short':'CST'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="responsive-modal" class="modal fade state-trail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+  style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">State Trail</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>Creation Time</th>
+                <th>Skills</th>
+                <th>Datasets</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let stateData of stateTraildata">
+                <td>{{stateData.resourceId}}</td>
+                <td>{{stateData.resourceName}}</td>
+                <td>{{stateData.resourceType}}</td>
+                <td>{{stateData.owner}}</td>
+                <td>{{stateData.creationTime | date :'short':'CST'}}</td>
+                <td>
+                  <small class="small-font" *ngFor="let skill of stateData.skills">
+                    {{skill}}
+                  </small>
+                </td>
+                <td>
+                  <small class="small-font" *ngFor="let dataset of stateData.datasets">
+                    {{dataset}}
+                  </small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div id="responsive-modal" class="modal fade view-purchase" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+  style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">View Purchase Requests</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="buyer p-1">
+          <span class="buyer-title">Buyer:</span>{{ buyerResource }}
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Creation Time</th>
+                <th>Skills</th>
+                <th>Datasets</th>
+                <th></th>
+                <th></th>
+
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let viewList of purchaseLists">
+                <td>{{viewList.resourceId}}</td>
+                <td>{{viewList.resourceName}}</td>
+                <td>{{viewList.resourceType}}</td>
+                <td>{{viewList.creationTime | date :'short':'CST'}}</td>
+                <td>
+                  <small class="small-font block" *ngFor="let skill of viewList.skills">
+                    {{skill}}
+                  </small>
+                </td>
+                <td>
+                  <small class="small-font block" *ngFor="let dataset of viewList.datasets">
+                    {{dataset}}
+                  </small>
+                </td>
+                <td>
+                  <button type="button" data-toggle="modal" class="btn btn-sm btn-res" (click)=sellResource(viewList)>Sell Resource</button>
+                </td>
+                <td>
+                  <button type="button" data-toggle="modal" class="btn btn-sm btn-res">Lease Resource</button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

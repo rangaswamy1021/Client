@@ -1,0 +1,16 @@
+
+  <div class="fix-header card-no-border">
+  <div id="main-wrapper">
+    <app-navbar></app-navbar>
+    <app-side-bar></app-side-bar>
+    <div class="page-wrapper" [class.loginwidth]="!loginService.topelement">
+        <app-block-chain></app-block-chain>
+        <div [class.loginwidth]="!loginService.topelement" class="container-fluid">
+          <router-outlet></router-outlet>
+        </div>      
+      </div>
+</div>
+</div>
+
+
+

@@ -1,0 +1,171 @@
+<div class="container-fluid pb-3 pt-5" *ngIf="!loginService.visible">
+  <div class="row block-chain">
+    <div class="col-md-12 ">
+      <h3 class="card-title">Blockchain Summary</h3>
+    </div>
+  </div>
+  <div class="row ">
+    <div class="col-md-5">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table no-border mb-0">
+              <tbody>
+
+                <tr>
+                  <td>Blockchain Version</td>
+                  <td class="font-medium">{{blockSummary.bcVersion}}</td>
+                </tr>
+                <tr>
+                  <td>Number of Subscriber</td>
+                  <td class="font-medium">{{blockSummary.subscriberCount}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table no-border mb-0">
+              <tbody>
+
+                <tr>
+                  <td>Number of Blocks</td>
+                  <td class="font-medium">{{blockSummary.numBlocks}}</td>
+                </tr>
+                <tr>
+                  <td>Hash Rate</td>
+                  <td class="font-medium" data-toggle="tooltip" data-placement="top" data-html="true" title=" 1 kH/s = 10<sup>3</sup> hashes/second ">{{blockSummary.hashRate}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- contact -->
+    <div class="col-md-4 ">
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table no-border mb-0">
+              <tbody>
+                <tr>
+                  <td>Gas Price</td>
+                  <td class="font-medium" data-toggle="tooltip" data-placement="top"   data-html="true" title=" 1 Mwei = 10<sup>-6</sup> ETH ">
+                    {{blockSummary.gasPrice}}</td>
+                </tr>
+                <tr>
+               
+                  <td>Total number of transaction</td>
+                  <td class="font-medium">{{blockSummary.transactionCount}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+        <div class="col-md-12 ">
+          <h3 class="card-title"> User Summary</h3>
+        </div>
+      </div>
+      <div class="row ">
+          <div class="col-md-5">
+              <div class="card">
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table no-border mb-0">
+                      <tbody>
+        
+                        <tr>
+                          <td>Account</td>
+                          <td class="font-medium">{{blockUserStats.account}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table no-border mb-0">
+                  <tbody>
+    
+                    <tr>
+                      <td>Ether Balance</td>
+                      <td class="font-medium">{{blockUserStats.balance}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 ">
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table no-border mb-0">
+                  <tbody>
+    
+                    <tr>
+                        <a href="" class="trans-cnt" data-toggle="modal" data-target=".transaction-count">
+                      <td>Transaction Count</td>
+                      <td class="font-medium">{{blockUserStats.transactionCount}}</td></a>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div>
+</div>
+
+
+<div id="responsive-modal" class="modal fade transaction-count" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Transactions</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      </div>
+      <div class="modal-body">
+          <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Timestamp </th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Gas</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let transition of transitions">
+                    <td>{{transition.timestamp  | date :'short'}}</td>
+                    <td>{{transition.from}}</td>
+                    <td>{{transition.to}}</td>
+                    <td>{{transition.gas}}</td>
+                    <td>{{transition.value}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+      </div>
+    
+    </div>
+  </div>
+</div>

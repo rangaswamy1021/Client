@@ -1,0 +1,48 @@
+<header class="topbar" *ngIf="!loginService.visible">
+  <nav class="navbar top-navbar navbar-expand-md navbar-light">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="">
+        <b>
+          <img src="assets/images/logo-icon.png" alt="homepage" class="light-logo main-logo" />
+        </b>
+      </a>
+    </div>
+    <div class="navbar-collapse">
+      <ul class="navbar-nav mr-auto mt-md-0">
+         
+        <li class="nav-item">
+          <a class="nav-link active" href=""> Console</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href=""> Performance</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href=""> Marketplace</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href=""> Docs</a>
+        </li>
+
+      </ul>
+      <ul class="navbar-nav my-lg-0">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false"> 
+            <span class="user-name"> {{First}} {{Last}}</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-right scale-up">
+
+             
+            <a class="dropdown-item nav-logout" (click)="isLogout()">
+              <i class="mdi mdi-power"></i>  Logout</a>
+
+          </div>
+        </li>
+      
+        <li class="nav-item">
+          <a class="nav-item nav-link login-btn"> Account: {{Account}} </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
